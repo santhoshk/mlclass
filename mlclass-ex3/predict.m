@@ -21,9 +21,15 @@ p = zeros(size(X, 1), 1);
 %       can use max(A, [], 2) to obtain the max for each row.
 %
 
+%add a column of ones to the x vector.
 a1_input = [ones(m,1) X]';
+%because we are going to multiply the rows of Theta with the columns of a1, we have transposed a1
+
 z2 = Theta1 * a1_input;
 a2_output = sigmoid(z2);
+
+% ; ==> adds a row of ones to a2_output to form a2_input
+%note that [ones(c,1) A] would add a column of ones to A, assuming A has c rows.
 a2_input = [ones(1,m);a2_output];
 z3 = Theta2 * a2_input;
 a3_output = sigmoid(z3);
