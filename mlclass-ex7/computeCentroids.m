@@ -25,13 +25,23 @@ centroids = zeros(K, n);
 %
 % Note: You can use a for-loop over the centroids to compute this.
 %
-
-
-
-
-
-
-
+%X
+%idx
+for i=1:K,
+	s = zeros(n,1)';
+	c = 0;
+	for j=1:m,
+		if (idx(j) == i)
+			s = s + X(j,:);
+			c++;
+		end;
+	end;
+	if(c > 0)
+		%s
+		%c
+		centroids(i,:) = s ./ c;
+	end;
+end;
 
 % =============================================================
 
