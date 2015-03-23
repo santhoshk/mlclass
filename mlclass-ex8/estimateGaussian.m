@@ -21,13 +21,17 @@ sigma2 = zeros(n, 1);
 %               should contain variance of the i-th feature.
 %
 
+%column wise of sum of X (===sum(X,0)) will give a row 
+%the ith elt in that row will be the sum of i-th feature in all m examples
+mu = (1/m)*sum(X,0)';
 
+%transpose of X will put the examples (1..m), one in each column
+%then subtract mean(i) from i-th row of every example
+%then square; then sum row wise
 
-
-
-
-
-
+%to subtract from X', lets repeat the mean, m number of times
+rep_mu = repmat(mu,1,m); 
+sigma2 = (1/m) * (sum(((X' - rep_mu) .^ 2), 2));
 
 
 % =============================================================

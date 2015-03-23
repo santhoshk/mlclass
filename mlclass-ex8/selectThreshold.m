@@ -24,16 +24,27 @@ for epsilon = min(pval):stepsize:max(pval)
     %       of 0's and 1's of the outlier predictions
 
 
+    %cvPredictions is a vector of cross validation predictions of size equal to cv set
+    %The ith element in this vector will be 1 if the algorithm considers x-i to be anomaly
+    %It will be 0, otherwise.
+    cvPredictions = (pval < epsilon);
 
+    %true positives (we predicted 1 and ground truth is also 1)
+    tp = sum((cvPredictions == 1) & (yval == 1));
 
+    %false pos (we predicted 1, but ground truth is 0)
+    fp = sum((cvPredictions == 1) & (yval == 0));
 
+    %false neg (we predicted 0, but ground truth is 1)
+    fn = sum((cvPredictions == 0) & (yval == 1));
 
+    %precision
+    prec = tp / (tp + fp);
 
+    %recall
+    rec = tp / (tp + fn);
 
-
-
-
-
+    F1 = (2 * prec * rec) / (prec + rec);
 
     % =============================================================
 

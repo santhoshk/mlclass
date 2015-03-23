@@ -40,13 +40,53 @@ Theta_grad = zeros(size(Theta));
 %                     partial derivatives w.r.t. to each element of Theta
 %
 
+vec = ((((X * Theta') - Y) .* R) .^ 2);
+J = sum(sum(vec)) * (1/2);
 
 
+for i=1:num_movies,
+	%list of all the users who have rated movie i
+	idx = find(R(i,:) == 1);
+
+	%Theta_temp is the parameter matrix for all users who rated movie i; rated_users * num_features
+	Theta_temp = Theta(idx,:);
+	Y_temp = Y(i,idx);
+
+	%in Theta_temp', the users will be in the columns; so it will be num_features * rated_users
+	%X(i,:) * Theta_temp' will multiply 1 movie row features (i.e 1*num_features) with all users who rated that movie (num_features * rated_users)
+	%so we get (1*rated_users) output. 
+	%then subtract Y_temp to get first part of gradient. This will be (1*rated_users) size. This first multiplier is common for all n partial derivatives in X_grad
+	%The 2nd multiplier is Theta_j for all j that have rated the movie. This is nothing by Theta_temp
+	%multiply first multiplier by Theta_temp, we get (1*rated_users) * (rated_users*num_features) = 1*num_features output. This is exactly X_grad(i,:)
+	X_grad(i,:) = (((X(i,:) * Theta_temp') - Y_temp) * (Theta_temp));	
+
+	%adding regularization to the gradient
+	X_grad(i,:) += lambda * X(i,:);
+end;
 
 
+%we will use similar logic for calculating Theta_grad for each theta_j
+for j=1:num_users,
+	%all movies rated by user j (num_ratings * 1)
+	idx1 = find(R(:,j) == 1); 
+
+	%X_temp1 is the parameter vector for all movies rated by user j (num_ratings * num_features)
+	X_temp1 = X(idx1,:);
+
+	%the ratings of all movies rated by user j (num_ratings * 1)
+	Y_temp1 = Y(idx1,j);
+
+	Theta_grad(j,:) =  (((X_temp1 * Theta(j,:)') - Y_temp1)' *  (X_temp1))';
+
+	%adding regularization to the gradient
+	Theta_grad(j,:) += lambda * Theta(j,:);
+end;
 
 
-
+%adding regularization to the cost func.
+reg_Theta = sum(sum((Theta .^ 2))) * (lambda/2);
+reg_X = sum(sum(X .^ 2)) * (lambda/2);
+J = J + reg_Theta + reg_X;
 
 
 
